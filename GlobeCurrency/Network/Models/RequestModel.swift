@@ -24,8 +24,10 @@ struct RequestModel {
         var request: URLRequest = URLRequest(url: requestURL)
         request.httpMethod = endpoint.method.rawValue
         
-        for (key, value) in endpoint.headers {
-            request.addValue(value, forHTTPHeaderField: key)
+        if let headers = endpoint.headers {
+            for (key, value) in headers {
+                request.addValue(value, forHTTPHeaderField: key)
+            }
         }
         
         return request

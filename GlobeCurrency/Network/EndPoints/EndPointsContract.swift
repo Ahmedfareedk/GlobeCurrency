@@ -11,8 +11,8 @@ import Foundation
 protocol EndPointsContract {
     var baseURL: String { get }
     var path: String { get }
-    var params: [URLQueryItem] { get }
-    var headers: HTTPHeaders { get }
+    var params: [URLQueryItem]? { get }
+    var headers: HTTPHeaders? { get }
     var method: HTTPMethod { get }
     
     func getURL() -> URL?
@@ -20,6 +20,14 @@ protocol EndPointsContract {
 
 
 extension EndPointsContract {
+    
+    var headers: HTTPHeaders? {
+        return nil
+    }
+    
+    var params: [URLQueryItem]? {
+        return nil
+    }
     
     var baseURL: String {
         return NetworkConstants.baseURL
