@@ -10,6 +10,7 @@ import Combine
 
 final class CountriesSearchViewModel: ObservableObject {
     @Published var countries: [Country] = []
+    @Published var isLoading: Bool = false
     private var cancellables = Set<AnyCancellable>()
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
     
@@ -18,14 +19,17 @@ final class CountriesSearchViewModel: ObservableObject {
     }
     
     func searchCountries(for name: String) {
+        isLoading = true
         searchCountriesUseCase.execute(countryName: name)
             .receive(on: RunLoop.main)
-            .sink { completion in
+            .sink {[weak self] completion in
+                self?.isLoading = false
                 guard case .failure(let error) = completion else { return }
                 print(error)
                 
-            } receiveValue: { countries in
-                self.countries = countries
+            } receiveValue: { [weak self]countries in
+                self?.isLoading = false
+                self?.countries = countries
             }.store(in: &cancellables)
 
     }
