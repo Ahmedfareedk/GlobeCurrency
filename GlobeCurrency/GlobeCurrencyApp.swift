@@ -11,7 +11,7 @@ import SwiftUI
 struct GlobeCurrencyApp: App {
     var body: some Scene {
         WindowGroup {
-            CountriesSearchView()
+            CountriesMainView()
         }
     }
 }
