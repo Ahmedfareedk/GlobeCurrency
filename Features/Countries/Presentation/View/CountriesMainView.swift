@@ -8,8 +8,45 @@
 import SwiftUI
 
 struct CountriesMainView: View {
+    @StateObject private var viewModel: CountriesMainViewModel = .init()
+    @State private var selectedCountry: Country?
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(viewModel.countries, id: \.id) { country in
+                            CountryCardView(country: country, isRemovable: true) {
+                                removeCountry(country)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Selected Countries")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(destination: CountriesSearchView()) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+        }
+        .sheet(item: $selectedCountry) { country in
+            CountryDetailsView(country: country) {
+                selectedCountry = nil
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.checkLocationPermission()
+        }
+
+        
+    }
+    
+    private func removeCountry(_ country: Country) {
+        viewModel.countries.removeAll { $0.id == country.id }
     }
 }
 

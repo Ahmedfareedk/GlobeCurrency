@@ -29,6 +29,16 @@
 		8BBD7B912D9625EA00BB5AAB /* GlobeCurrencyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlobeCurrencyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8BCF56FC2D982F61006C9A1F /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8BBD7B762D9625E800BB5AAB /* GlobeCurrency */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8B9FD26C2D9748F400061669 /* Features */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -42,6 +52,9 @@
 		};
 		8BBD7B792D9625E800BB5AAB /* GlobeCurrency */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8BCF56FC2D982F61006C9A1F /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */,
+			);
 			path = GlobeCurrency;
 			sourceTree = "<group>";
 		};
@@ -413,6 +426,8 @@
 				DEVELOPMENT_TEAM = ZM4X8J4HCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -442,6 +457,8 @@
 				DEVELOPMENT_TEAM = ZM4X8J4HCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
