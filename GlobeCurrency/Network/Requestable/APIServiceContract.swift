@@ -8,5 +8,5 @@
 import Combine
 
 protocol APIServiceContract {
-    func request<T: Decodable>(_ urlRequest: RequestModel) -> AnyPublisher<T, Error>
+    func request<T: Decodable>(_ urlRequest: APIRequestBuilder, responseType: T.Type) -> AnyPublisher<T, Error>
 }

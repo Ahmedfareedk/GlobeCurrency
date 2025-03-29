@@ -9,63 +9,67 @@ import Foundation
 
 class APIRequestBuilder {
     let endpoint: EndPointsContract
-    private var urlRequest: URLRequest
+    private var request: URLRequest
 
     init(endpoint: EndPointsContract) {
         self.endpoint = endpoint
-        initURLRequest()
+        guard let url = URL(string: endpoint.baseURL) else {
+            fatalError("Could not create URL: \(endpoint.baseURL)")
+            
+        }
+        self.request = URLRequest(url: url)
     }
     
-    private func initURLRequest() {
-        if let url = URL(string: endpoint.baseURL) {
-            self.urlRequest = URLRequest(url: url)
-        }
-    }
     func getURLRequest() -> URLRequest? {
-        guard let requestURL = endpoint.getURL() else {
-            fatalError("Could not create URL: \(endpoint.baseURL)")
-        }
-        
-        var request: URLRequest = URLRequest(url: requestURL)
+        setParameterIfExist()
         request.httpMethod = endpoint.method.rawValue
+        setHeadersIfExist()
+        return request
         
+    }
+    
+    private func setHeadersIfExist() {
         if let headers = endpoint.headers {
             for (key, value) in headers {
                 request.addValue(value, forHTTPHeaderField: key)
             }
         }
-        
-        setParameterIfExist(to: &request)
-        
-        return request
-        
     }
     
-    private func setParameterIfExist(to request: inout URLRequest) {
+    private func setParameterIfExist() {
         if let params = endpoint.params {
             switch params {
+            case .pathParams(let parameters):
+                applyPathParameters(with: parameters)
             case .query(let parameters):
-                applyQueryParameters(to: &request, with: parameters)
+                applyQueryParameters(with: parameters)
             case .body(let parameters):
-                applyBodyParameters(to: &request, with: parameters)
+                applyBodyParameters(with: parameters)
             }
         }
 
     }
-    private func applyQueryParameters(to request: inout URLRequest, with params: Parameters) {
-        
-        let queryParams = params.map { pair in
-            return URLQueryItem(name: pair.key, value: "\(pair.value)")
+    
+    private func applyPathParameters(with params: Parameters) {
+        var fullPath = endpoint.path
+        for (_, value) in params {
+            fullPath += "\(value)/"
         }
-
-        if let url = request.url {
-            var components = URLComponents(string: url.absoluteString)
-            components?.queryItems = queryParams
-            request.url = components?.url
+        let fullURLString = endpoint.baseURL + fullPath
+        if let url = URL(string: fullURLString) {
+            self.request = URLRequest(url: url)
         }
     }
     
-    private func applyBodyParameters(to request: inout URLRequest, with params: Parameters) {
+    private func applyQueryParameters(with params: Parameters) {
+        if let url = request.url {
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            components?.queryItems =  params.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+            request.url = components?.url?.absoluteURL
+        }
+    }
+    
+    private func applyBodyParameters(with params: Parameters) {
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
         } catch {

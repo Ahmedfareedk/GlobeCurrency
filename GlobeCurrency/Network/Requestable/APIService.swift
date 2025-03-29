@@ -8,8 +8,8 @@
 import Foundation
 import Combine
 
-final class APIService: RequestableContract {
-    func request<T: Decodable>(_ urlRequest: RequestModel) -> AnyPublisher<T, Error> {
+final class APIService: APIServiceContract {
+    func request<T: Decodable>(_ urlRequest: APIRequestBuilder, responseType: T.Type) -> AnyPublisher<T, Error> {
         guard let generatedURLRequest = urlRequest.getURLRequest()
         else { fatalError("Couldn't Create URLRequest")
         }
@@ -23,7 +23,7 @@ final class APIService: RequestableContract {
                 }
                 return data
             }
-            .decode(type: T.self, decoder: JSONDecoder())
+            .decode(type: responseType.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
     

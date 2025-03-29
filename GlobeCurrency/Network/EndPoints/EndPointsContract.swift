@@ -11,11 +11,9 @@ import Foundation
 protocol EndPointsContract {
     var baseURL: String { get }
     var path: String { get }
-    var params: [URLQueryItem]? { get }
+    var params: RequestParams? { get }
     var headers: HTTPHeaders? { get }
     var method: HTTPMethod { get }
-    
-    func getURL() -> URL?
 }
 
 
@@ -25,21 +23,12 @@ extension EndPointsContract {
         return nil
     }
     
-    var params: [URLQueryItem]? {
+    var params: RequestParams? {
         return nil
     }
     
     var baseURL: String {
         return NetworkConstants.baseURL
-    }
-    
-    func getURL() -> URL? {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = baseURL
-        components.path = path
-        components.queryItems = params
-        return components.url
     }
 }
 

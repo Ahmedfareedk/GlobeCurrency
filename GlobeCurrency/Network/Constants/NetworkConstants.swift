@@ -9,5 +9,6 @@ import Foundation
 
 enum NetworkConstants {
     static let statusCodeSuccessRange = 200...299
-    static let baseURL = "restcountries.com/v2/"
+    static let baseURL = "https://restcountries.com/v3.1/"
+    static let searchByNamePath = "name/"
 }
