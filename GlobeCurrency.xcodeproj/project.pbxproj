@@ -427,6 +427,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -458,6 +459,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

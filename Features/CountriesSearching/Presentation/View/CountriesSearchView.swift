@@ -26,6 +26,7 @@ struct CountriesSearchView: View {
             countriesListView
         }
         .padding()
+        .overlay(viewModel.isLoading ? LoadingView() : nil)
     }
     
     private var searchView: some View {

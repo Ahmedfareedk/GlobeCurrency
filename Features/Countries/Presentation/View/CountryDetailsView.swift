@@ -17,9 +17,7 @@ struct CountryDetailsView: View {
         VStack(spacing: 20) {
             closeButton
             flagImageView
-            
-           
-            
+            detailsTextViews
             Spacer()
         }
         .padding()
@@ -31,6 +29,11 @@ struct CountryDetailsView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 84)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(.gray.opacity(0.5), lineWidth: 1)
+                )
         } placeholder: {
             ProgressView()
         }
@@ -62,7 +65,6 @@ struct CountryDetailsView: View {
             Spacer()
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
-                    .font(.headline)
                     .foregroundColor(.white)
                     .padding(10)
                     .background(Color.gray.opacity(0.6))

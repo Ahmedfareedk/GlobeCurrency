@@ -20,9 +20,13 @@ struct CountriesMainView: View {
                             CountryCardView(country: country, isRemovable: true) {
                                 removeCountry(country)
                             }
+                            .onTapGesture {
+                                self.selectedCountry = country
+                            }
                         }
                     }
                 }
+                .padding()
             }
             .navigationTitle("Selected Countries")
             .toolbar {
@@ -37,10 +41,12 @@ struct CountriesMainView: View {
             CountryDetailsView(country: country) {
                 selectedCountry = nil
             }
+            .presentationDetents([.medium, .large])
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             viewModel.checkLocationPermission()
         }
+        .overlay(viewModel.isLoading ? LoadingView() : nil)
 
         
     }

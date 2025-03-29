@@ -31,7 +31,7 @@ struct CountryCardView: View {
     @ViewBuilder
     private func detailText(_ text: String, isTitle: Bool = false) -> some View {
         Text(text)
-            .font(isTitle ? .title2.bold() : .body)
+            .font(isTitle ? .title2.bold() : .callout)
             .foregroundColor(.white.opacity(isTitle ? 1 : 0.8))
             .multilineTextAlignment(.leading)
     }
