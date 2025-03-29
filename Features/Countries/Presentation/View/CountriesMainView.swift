@@ -38,9 +38,7 @@ struct CountriesMainView: View {
             }
         }
         .sheet(item: $selectedCountry) { country in
-            CountryDetailsView(country: country) {
-                selectedCountry = nil
-            }
+            detailsView(country: country)
             .presentationDetents([.medium, .large])
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
@@ -49,6 +47,13 @@ struct CountriesMainView: View {
         .overlay(viewModel.isLoading ? LoadingView() : nil)
 
         
+    }
+    
+    @ViewBuilder
+    private func detailsView(country: Country) -> some View {
+        CountryDetailsView(country: country) {
+            selectedCountry = nil
+        }
     }
     
     private func removeCountry(_ country: Country) {
