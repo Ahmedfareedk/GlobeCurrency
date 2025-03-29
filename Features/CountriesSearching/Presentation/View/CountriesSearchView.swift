@@ -36,7 +36,7 @@ struct CountriesSearchView: View {
     
     @ViewBuilder
     private func detailsView(country: Country) -> some View {
-        CountryDetailsView(country: country) {
+        CountryDetailsView(country: country, actionButton: detailsActionButton) {
             selectedCountry = nil
         }
     }
@@ -51,9 +51,7 @@ struct CountriesSearchView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(viewModel.countries, id: \.id) { country in
-                    CountryCardView(country: country) {
-                        print("removvvve")
-                    }
+                    CountryCardView(country: country, actionButton: listItemActionButton)
                     .onTapGesture {
                         selectedCountry = country
                     }
@@ -72,6 +70,18 @@ struct CountriesSearchView: View {
         EmptyStateView(
             message: "No results found",
             systemImage: "exclamationmark.magnifyingglass")
+    }
+    
+    private var listItemActionButton: some View {
+        CustomButton(foregroundColor: .blue, imageName: "plus.circle.fill") {
+            print("addddd")
+        }
+    }
+    
+    private var detailsActionButton: some View {
+        CustomButton(backgroundColor: .blue, label: "Add to main countries list", height: 64, cornerRadius: 12, isFullWidth: true) {
+            print("addddd")
+        }
     }
 }
 

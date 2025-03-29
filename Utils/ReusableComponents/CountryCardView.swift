@@ -7,20 +7,16 @@
 
 import SwiftUI
 
-struct CountryCardView: View {
+struct CountryCardView<ActionButton: View>: View {
     let country: Country
-    var isRemovable: Bool = false
-    let onRemove: () -> Void
+    var actionButton: ActionButton
     
     var body: some View {
         HStack(spacing: 12) {
             flagImageView
             detailsView
-            
-            if isRemovable {
-                Spacer()
-                removeButton
-            }
+            Spacer()
+            actionButton
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -64,16 +60,6 @@ struct CountryCardView: View {
                     
                 }
             }
-        }
-    }
-    
-    private var removeButton: some View {
-        Button(action: onRemove) {
-            Image(systemName: "trash")
-                .foregroundColor(.white)
-                .padding(8)
-                .background(Color.red.opacity(0.8))
-                .clipShape(Circle())
         }
     }
 }

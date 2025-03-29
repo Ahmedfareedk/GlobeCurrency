@@ -17,9 +17,7 @@ struct CountriesMainView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.countries, id: \.id) { country in
-                            CountryCardView(country: country, isRemovable: true) {
-                                removeCountry(country)
-                            }
+                            CountryCardView(country: country, actionButton: listItemActionButton)
                             .onTapGesture {
                                 self.selectedCountry = country
                             }
@@ -51,8 +49,20 @@ struct CountriesMainView: View {
     
     @ViewBuilder
     private func detailsView(country: Country) -> some View {
-        CountryDetailsView(country: country) {
+        CountryDetailsView(country: country, actionButton: detailsActionButton) {
             selectedCountry = nil
+        }
+    }
+    
+    private var listItemActionButton: some View {
+        CustomButton(foregroundColor: .red, imageName: "trash") {
+            print("addddd")
+        }
+    }
+    
+    private var detailsActionButton: some View {
+        CustomButton(backgroundColor: .red, label: "Remove from countries list", height: 64, cornerRadius: 12, isFullWidth: true) {
+            print("addddd")
         }
     }
     

@@ -9,8 +9,9 @@ import SwiftUI
 
 import SwiftUI
 
-struct CountryDetailsView: View {
+struct CountryDetailsView<ActionButton: View>: View {
     let country: Country
+    var actionButton: ActionButton
     let onDismiss: () -> Void
     
     var body: some View {
@@ -19,6 +20,7 @@ struct CountryDetailsView: View {
             flagImageView
             detailsTextViews
             Spacer()
+            actionButton
         }
         .padding()
     }
