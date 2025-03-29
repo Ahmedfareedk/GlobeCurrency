@@ -10,9 +10,10 @@ import SwiftUI
 struct CountriesSearchView: View {
     @StateObject private var viewModel: CountriesSearchViewModel = .init()
     @State private var searchText: String = ""
+    @State private var selectedCountry: Country?
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12){
             searchView
             Spacer()
             if searchText.isEmpty {
@@ -27,6 +28,17 @@ struct CountriesSearchView: View {
         }
         .padding()
         .overlay(viewModel.isLoading ? LoadingView() : nil)
+        .sheet(item: $selectedCountry) { country in
+            detailsView(country: country)
+            .presentationDetents([.medium, .large])
+        }
+    }
+    
+    @ViewBuilder
+    private func detailsView(country: Country) -> some View {
+        CountryDetailsView(country: country) {
+            selectedCountry = nil
+        }
     }
     
     private var searchView: some View {
@@ -36,10 +48,15 @@ struct CountriesSearchView: View {
     }
     
     private var countriesListView: some View {
-        LazyVStack(alignment: .leading, spacing: 12) {
-            ForEach(viewModel.countries, id: \.id) { country in
-                CountryCardView(country: country) {
-                    print("removvvve")
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 12) {
+                ForEach(viewModel.countries, id: \.id) { country in
+                    CountryCardView(country: country) {
+                        print("removvvve")
+                    }
+                    .onTapGesture {
+                        selectedCountry = country
+                    }
                 }
             }
         }
