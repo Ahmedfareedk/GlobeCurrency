@@ -8,14 +8,9 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    @State private var searchText: String = ""
+    @Binding var searchText: String
     var placeholder: String
-    var onTapSearch: ((String) -> Void)
-
-    init(placeholder: String, onTapSearch: @escaping (String) -> Void) {
-        self.placeholder = placeholder
-        self.onTapSearch = onTapSearch
-    }
+    var onTapSearch: () -> Void
     
     var body: some View {
         HStack {
@@ -34,7 +29,7 @@ struct SearchBarView: View {
     
     private var searchButton: some View {
         Button(action: {
-            onTapSearch(searchText)
+            onTapSearch()
         }) {
             Image(systemName: "magnifyingglass") // Search icon
                 .padding()
@@ -49,12 +44,12 @@ struct SearchBarView: View {
     }
 }
 
-//struct SearchBarView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SearchBarView(
-//    }
-//}
-//
-//#Preview {
-//    SearchBarView()
-//}
+struct SearchBarView_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchBarView(searchText: .constant(""), placeholder: "") {}
+    }
+}
+
+#Preview {
+    SearchBarView(searchText: .constant(""), placeholder: "") {}
+}

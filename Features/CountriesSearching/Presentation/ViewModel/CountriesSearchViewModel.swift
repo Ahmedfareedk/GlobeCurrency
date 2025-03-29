@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class CountriesHomeViewModel: ObservableObject {
+final class CountriesSearchViewModel: ObservableObject {
     @Published var countries: [Country] = []
     private var cancellables = Set<AnyCancellable>()
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
@@ -18,7 +18,8 @@ final class CountriesHomeViewModel: ObservableObject {
     }
     
     func searchCountries(for name: String) {
-        searchCountriesUseCase.execute(countryName: "egypt")
+        searchCountriesUseCase.execute(countryName: name)
+            .receive(on: RunLoop.main)
             .sink { completion in
                 guard case .failure(let error) = completion else { return }
                 print(error)

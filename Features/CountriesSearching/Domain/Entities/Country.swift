@@ -7,25 +7,26 @@
 
 import Foundation
 
-struct Country: Codable {
+struct Country: Codable, Identifiable {
     let name: CountryName
     let currencies: [String: Currency]?
     let capital: [String]?
-    let altSpellings: [String]?
-    let region, subregion: String?
+    let region: String?
     let languages: [String: String]?
     let latlng: [Double]?
     let flag: String?
     let population: Int?
     let gini: [String: Double]?
-    let fifa: String?
-    let timezones, continents: [String]?
     let flags: Flags?
-    let startOfWeek: String?
+    let cca3: String?
+    
+    var id: String {
+        cca3 ?? UUID().uuidString
+    }
 }
 
 struct CountryName: Codable {
-    let common, official: String?
+    let common, official: String
     let nativeName: [String: NativeName]?
 }
 
