@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class Requestable: RequestableContract {
+final class APIService: RequestableContract {
     func request<T: Decodable>(_ urlRequest: RequestModel) -> AnyPublisher<T, Error> {
         guard let generatedURLRequest = urlRequest.getURLRequest()
         else { fatalError("Couldn't Create URLRequest")

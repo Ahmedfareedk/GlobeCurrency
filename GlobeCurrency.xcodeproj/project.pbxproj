@@ -30,6 +30,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8B9FD26C2D9748F400061669 /* Features */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Features;
+			sourceTree = "<group>";
+		};
 		8BBD7B792D9625E800BB5AAB /* GlobeCurrency */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = GlobeCurrency;
@@ -76,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				8BBD7B792D9625E800BB5AAB /* GlobeCurrency */,
+				8B9FD26C2D9748F400061669 /* Features */,
 				8BBD7B8A2D9625EA00BB5AAB /* GlobeCurrencyTests */,
 				8BBD7B942D9625EA00BB5AAB /* GlobeCurrencyUITests */,
 				8BBD7B782D9625E800BB5AAB /* Products */,
@@ -108,6 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				8B9FD26C2D9748F400061669 /* Features */,
 				8BBD7B792D9625E800BB5AAB /* GlobeCurrency */,
 			);
 			name = GlobeCurrency;

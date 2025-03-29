@@ -7,6 +7,6 @@
 
 import Combine
 
-protocol RequestableContract {
+protocol APIServiceContract {
     func request<T: Decodable>(_ urlRequest: RequestModel) -> AnyPublisher<T, Error>
 }
