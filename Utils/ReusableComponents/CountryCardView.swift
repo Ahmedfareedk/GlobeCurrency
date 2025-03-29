@@ -9,8 +9,9 @@ import SwiftUI
 
 struct CountryCardView: View {
     let country: Country
-    let onRemove: () -> Void
     var isRemovable: Bool = false
+    let onRemove: () -> Void
+    
     var body: some View {
         HStack(spacing: 12) {
             flagImageView
