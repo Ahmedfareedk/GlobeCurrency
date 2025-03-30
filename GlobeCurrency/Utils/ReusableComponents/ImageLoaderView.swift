@@ -16,7 +16,7 @@ struct ImageLoaderView: View {
         Rectangle()
             .opacity(0.001)
             .overlay {
-                WebImage(url: URL(string: imageURL))
+                WebImage(url: URL(string: imageURL), options: [.refreshCached])
                     .resizable()
                     .indicator(.activity)
                     .aspectRatio(contentMode: resizingMode)
