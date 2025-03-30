@@ -9,12 +9,9 @@ import Foundation
 import Combine
 
 final class FileCacheManager: FileCacheManagerContract {
-    private var updatesSubject = PassthroughSubject<Void, Never>()
     private let fileName: String
     private let queue = DispatchQueue(label: "fileCacheQueue", attributes: .concurrent)
     private let subject = PassthroughSubject<Void, Never>()
-    var updates: AnyPublisher<Void, Never> { updatesSubject.eraseToAnyPublisher() }
-
     
     lazy private var cacheDirectoryURL: URL = {
         let cacheDirectoryURL = FileManager.default.urls(
@@ -41,7 +38,6 @@ final class FileCacheManager: FileCacheManagerContract {
                 
                 do {
                     try saveObjects(allObjects)
-                    updatesSubject.send()
                     promise(.success(()))
                 } catch {
                     promise(.failure(error))
@@ -69,7 +65,6 @@ final class FileCacheManager: FileCacheManagerContract {
                 
                 do {
                     try saveObjects(allObjects)
-                    updatesSubject.send()
                     promise(.success(()))
                 } catch {
                     promise(.failure(error))
