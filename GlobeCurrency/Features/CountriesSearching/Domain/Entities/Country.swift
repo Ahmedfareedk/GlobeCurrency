@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Country: Codable, Identifiable {
+struct Country: Codable, Identifiable, Equatable {
     let name: CountryName
     let currencies: [String: Currency]?
     let capital: [String]?
@@ -23,6 +23,10 @@ struct Country: Codable, Identifiable {
     var id: String {
         cca3 ?? UUID().uuidString
     }
+    
+    static func == (lhs: Country, rhs: Country) -> Bool {
+           return lhs.id == rhs.id
+       }
 }
 
 struct CountryName: Codable {
