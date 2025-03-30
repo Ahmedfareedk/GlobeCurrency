@@ -19,9 +19,11 @@ struct CountriesMainView: View {
             }
             .navigationTitle("Countries")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: CountriesSearchView(shouldRefresh: $shouldRefreshData)) {
-                        Image(systemName: "plus")
+                if viewModel.isOnline {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: CountriesSearchView(shouldRefresh: $shouldRefreshData)) {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }
@@ -40,6 +42,7 @@ struct CountriesMainView: View {
             viewModel.checkLocationPermission()
         }
         .overlay(viewModel.isLoading ? LoadingView() : nil)
+        .overlay(goOfflineSnackBarView)
     }
     
     
@@ -77,6 +80,13 @@ struct CountriesMainView: View {
             viewModel.removeCountry(deletableCountry)
             dismissDetailsSheet()
         }
+    }
+    
+    private var goOfflineSnackBarView: some View {
+        SnackBarView(message: "You are offline, try to connect to fetch default country", dismissible: false, isVisible: Binding(
+            get: { !viewModel.isOnline },
+            set: { viewModel.isOnline = !$0 }
+        ))
     }
     
     private func dismissDetailsSheet() {

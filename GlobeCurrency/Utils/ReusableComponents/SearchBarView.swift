@@ -9,8 +9,11 @@ import SwiftUI
 
 struct SearchBarView: View {
     @Binding var searchText: String
+    @State var isSearchButtonDisabled: Bool
+    @FocusState private var isTextFieldFocused: Bool
     var placeholder: String
     var onTapSearch: () -> Void
+    
     
     var body: some View {
         HStack {
@@ -25,18 +28,23 @@ struct SearchBarView: View {
         TextField(placeholder, text: $searchText)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding(.horizontal, 8)
+            .focused($isTextFieldFocused)
+            .keyboardType(.asciiCapable)
     }
     
     private var searchButton: some View {
         Button(action: {
             onTapSearch()
+            isTextFieldFocused = false
         }) {
-            Image(systemName: "magnifyingglass") // Search icon
+            Image(systemName: "magnifyingglass")
                 .padding()
-                .background(Color.blue)
+                .background(isSearchButtonDisabled ? .gray : .blue)
                 .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
+                .opacity(isSearchButtonDisabled ? 0.9 : 1.0)
         }
+        .disabled(isSearchButtonDisabled)
     }
 
     func performSearch() {
@@ -46,10 +54,10 @@ struct SearchBarView: View {
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant(""), placeholder: "") {}
+        SearchBarView(searchText: .constant(""), isSearchButtonDisabled: false, placeholder: "") {}
     }
 }
 
 #Preview {
-    SearchBarView(searchText: .constant(""), placeholder: "") {}
+    SearchBarView(searchText: .constant(""), isSearchButtonDisabled: false, placeholder: "") {}
 }

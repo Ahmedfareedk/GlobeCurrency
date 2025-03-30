@@ -16,19 +16,14 @@ struct CountriesSearchView: View {
     var body: some View {
         VStack(spacing: 12){
             searchView
-            Spacer()
-            if searchText.isEmpty && viewModel.countries.isEmpty {
-                emptySearchTextView
-            }
-            
-//            if viewModel.countries.isEmpty && !searchText.isEmpty{
-//                emptySearchResultsView
-//            }
-            
             countriesListView
         }
         .padding()
         .overlay(viewModel.isLoading ? LoadingView() : nil)
+        .overlay((viewModel.showEmptyResultsState && !searchText.isEmpty) ? emptySearchResultsView : nil)
+        .overlay(searchText.isEmpty ? emptySearchTextView : nil)
+        .overlay(reachedLimitSnackBarView)
+        .overlay(goOfflineSnackBarView)
         .sheet(item: $selectedCountry) { country in
             detailsView(country: country)
             .presentationDetents([.medium, .large])
@@ -49,10 +44,11 @@ struct CountriesSearchView: View {
     }
     
     private var searchView: some View {
-        SearchBarView(searchText: $searchText, placeholder: "Search by country name") {
+        SearchBarView(searchText: $searchText, isSearchButtonDisabled: !viewModel.isOnline, placeholder: "Search by country name") {
             dismissDetailsSheet()
             viewModel.searchCountries(for: searchText)
         }
+        .disabled(!viewModel.isOnline)
     }
     
     private var countriesListView: some View {
@@ -66,6 +62,7 @@ struct CountriesSearchView: View {
                 }
             }
         }
+        .scrollDismissesKeyboard(.immediately)
     }
     
     private func dismissDetailsSheet() {
@@ -97,5 +94,16 @@ struct CountriesSearchView: View {
             viewModel.saveCountry(selectedCountry)
             dismissDetailsSheet()
         }
+    }
+    
+    private var reachedLimitSnackBarView: some View {
+        SnackBarView(message: "You can only save up to 5 countries.", isVisible: $viewModel.showReachedLimitView)
+    }
+    
+    private var goOfflineSnackBarView: some View {
+        SnackBarView(message: "You are offline, try to reconnect to fetch countries", dismissible: false, isVisible: Binding(
+            get: { !viewModel.isOnline },
+            set: { viewModel.isOnline = !$0 }
+        ))
     }
 }

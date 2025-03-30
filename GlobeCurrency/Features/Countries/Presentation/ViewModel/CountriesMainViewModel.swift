@@ -11,24 +11,44 @@ import Combine
 class CountriesMainViewModel: ObservableObject {
     @Published var countries: [Country] = []
     @Published var isLoading: Bool = false
+    @Published var isOnline: Bool = true
+    @Published var showOfflineSnackBar: Bool = false
+    @Published private var locationPermissionStatus: Bool = false
     private let permissionAuthenticator: PermissionsAuthenticatorContract
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
     private let countriesPersistenceUseCase: CountryPersistenceUseCaseContract
     private let locationManager: UserLocationManager
+    private let networkMonitor: NetworkMonitorContract
     private var cancellables: Set<AnyCancellable> = []
     private var defaultCountryName: String = "Egypt"
+    
  
     init(
         permissionAuthenticator: PermissionsAuthenticatorContract = PermissionsAutheticator.locationPermission,
         locationManager: UserLocationManager = UserLocationManager(),
         searchCountriesUseCase: SearchCountriesUseCaseContract = SearchCountriesUseCase(),
-        countriesPersistenceUseCase: CountryPersistenceUseCaseContract = CountryPersistenceUseCase()
+        countriesPersistenceUseCase: CountryPersistenceUseCaseContract = CountryPersistenceUseCase(),
+        networkMonitor: NetworkMonitorContract = NetworkMonitor.shared
     ) {
         self.permissionAuthenticator = permissionAuthenticator
         self.locationManager = locationManager
         self.searchCountriesUseCase = searchCountriesUseCase
         self.countriesPersistenceUseCase = countriesPersistenceUseCase
+        self.networkMonitor = networkMonitor
         checkLocationPermission()
+        observeNetworkChanges()
+    }
+    
+    private func observeNetworkChanges() {
+        if let monitor = networkMonitor as? NetworkMonitor {
+            monitor.$isConnected
+                .receive(on: RunLoop.main)
+                .dropFirst()
+                .sink { [weak self] isConnected in
+                    self?.isOnline = isConnected
+                }
+                .store(in: &cancellables)
+        }
     }
     
     func checkLocationPermission() {
@@ -38,7 +58,9 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     private func getUserLocationBasedOnLocationPermission(isAuthorized: Bool) {
-        if isAuthorized {
+        guard locationPermissionStatus != isAuthorized else { return }
+        locationPermissionStatus = isAuthorized
+        if locationPermissionStatus && isOnline {
             setUserCountryName()
         } else {
             fetchAllCountries()
@@ -46,6 +68,7 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     private func setUserCountryName() {
+        isLoading = true
         locationManager.requestLocation()
         locationManager.countryName
             .receive(on: RunLoop.main)
@@ -56,6 +79,10 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     private func fetchDefaultCountry() {
+        guard isOnline else {
+            showOfflineSnackBar = true
+            return
+        }
         isLoading = true
         searchCountriesUseCase.execute(countryName: defaultCountryName)
             .receive(on: RunLoop.main)
@@ -86,11 +113,14 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     func saveCountry(_ country: Country) {
+        isLoading = true
         countriesPersistenceUseCase.executeSave(country: country)
             .receive(on: RunLoop.main)
-            .sink { completion in
+            .sink {[weak self] completion in
+                self?.isLoading = false
                 guard case .failure(_) = completion else { return }
-            } receiveValue: { _ in
+            } receiveValue: {[weak self] _ in
+                self?.isLoading = false
                 //TODO: to show a snack bar or a toast
             }
             .store(in: &cancellables)
@@ -104,8 +134,8 @@ class CountriesMainViewModel: ObservableObject {
                 guard case .failure(_) = completion else { return }
                 self.isLoading = false
             } receiveValue: {[weak self] countries in
-                self?.isLoading = false
                 self?.handleCountriesResponse(countries)
+                self?.isLoading = false
             }.store(in: &cancellables)
     }
     
