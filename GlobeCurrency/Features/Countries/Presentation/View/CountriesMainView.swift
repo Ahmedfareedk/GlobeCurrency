@@ -10,65 +10,77 @@ import SwiftUI
 struct CountriesMainView: View {
     @StateObject private var viewModel: CountriesMainViewModel = .init()
     @State private var selectedCountry: Country?
+    @State private var shouldRefreshData: Bool = false
 
     var body: some View {
         NavigationStack {
             VStack {
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(viewModel.countries, id: \.id) { country in
-                            CountryCardView(country: country, actionButton: listItemActionButton)
-                            .onTapGesture {
-                                self.selectedCountry = country
-                            }
-                        }
-                    }
-                }
-                .padding()
+                countriesListView
             }
-            .navigationTitle("Selected Countries")
+            .navigationTitle("Countries")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: CountriesSearchView()) {
+                    NavigationLink(destination: CountriesSearchView(shouldRefresh: $shouldRefreshData)) {
                         Image(systemName: "plus")
                     }
                 }
             }
         }
+        .onChange(of: shouldRefreshData, { _, newValue in
+            if newValue {
+                viewModel.fetchAllCountries()
+                shouldRefreshData = false
+            }
+        })
         .sheet(item: $selectedCountry) { country in
             detailsView(country: country)
-            .presentationDetents([.medium, .large])
+                .presentationDetents([.medium, .large])
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             viewModel.checkLocationPermission()
         }
         .overlay(viewModel.isLoading ? LoadingView() : nil)
-
-        
+    }
+    
+    
+    private var countriesListView: some View {
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(viewModel.countries, id: \.id) { country in
+                    CountryCardView(country: country, actionButton: listItemActionButton(deletableCountry: country))
+                        .onTapGesture {
+                            self.selectedCountry = country
+                        }
+                }
+            }
+        }
+        .padding()
+    }
+  
+    @ViewBuilder
+    private func detailsView(country: Country) -> some View {
+        CountryDetailsView(country: country, actionButton: detailsActionButton(deletableCountry: country)) {
+            dismissDetailsSheet()
+        }
     }
     
     @ViewBuilder
-    private func detailsView(country: Country) -> some View {
-        CountryDetailsView(country: country, actionButton: detailsActionButton) {
-            selectedCountry = nil
-        }
-    }
-    
-    private var listItemActionButton: some View {
+    private func listItemActionButton(deletableCountry: Country) -> some View {
         CustomButton(foregroundColor: .red, imageName: "trash") {
-            removeSelectedCountry()
+            viewModel.removeCountry(deletableCountry)
         }
     }
     
-    private var detailsActionButton: some View {
+    @ViewBuilder
+    private func detailsActionButton(deletableCountry: Country) -> some View {
         CustomButton(backgroundColor: .red, label: "Remove from countries list", height: 64, cornerRadius: 12, isFullWidth: true) {
-            removeSelectedCountry()
+            viewModel.removeCountry(deletableCountry)
+            dismissDetailsSheet()
         }
     }
     
-    private func removeSelectedCountry() {
-        guard let selectedCountry else { return }
-        viewModel.removeCountry(selectedCountry)
+    private func dismissDetailsSheet() {
+        selectedCountry = nil
     }
 }
 

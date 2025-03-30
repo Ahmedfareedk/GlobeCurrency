@@ -12,12 +12,12 @@ class CountriesMainViewModel: ObservableObject {
     @Published var countries: [Country] = []
     @Published var isLoading: Bool = false
     private let permissionAuthenticator: PermissionsAuthenticatorContract
+    private let searchCountriesUseCase: SearchCountriesUseCaseContract
+    private let countriesPersistenceUseCase: CountryPersistenceUseCaseContract
     private let locationManager: UserLocationManager
     private var cancellables: Set<AnyCancellable> = []
     private var defaultCountryName: String = "Egypt"
-    private let searchCountriesUseCase: SearchCountriesUseCaseContract
-    private let countriesPersistenceUseCase: CountryPersistenceUseCaseContract
-    
+ 
     init(
         permissionAuthenticator: PermissionsAuthenticatorContract = PermissionsAutheticator.locationPermission,
         locationManager: UserLocationManager = UserLocationManager(),
@@ -73,12 +73,15 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     func removeCountry(_ country: Country) {
+        self.isLoading = true
         countriesPersistenceUseCase.executeDelete(country:country)
             .receive(on: RunLoop.main)
-            .sink { completion in
+            .sink {[weak self] completion in
                 guard case .failure(_) = completion else { return }
-            } receiveValue: { _ in
-                print("removed Successfully")
+                self?.isLoading = false
+            } receiveValue: {[weak self] _ in
+                self?.countries.removeAll(where: {$0 == country})
+                self?.isLoading = false
             }.store(in: &cancellables)
     }
     
@@ -88,16 +91,17 @@ class CountriesMainViewModel: ObservableObject {
             .sink { completion in
                 guard case .failure(_) = completion else { return }
             } receiveValue: { _ in
-                print("Saveeeeeeeeeed")
-            }.store(in: &cancellables)
+                //TODO: to show a snack bar or a toast
+            }
+            .store(in: &cancellables)
     }
     
-    private func fetchAllCountries() {
+    func fetchAllCountries() {
         isLoading = true
         countriesPersistenceUseCase.executeFetchCountries()
             .receive(on: RunLoop.main)
             .sink { completion in
-                guard case .failure(let error) = completion else { return }
+                guard case .failure(_) = completion else { return }
                 self.isLoading = false
             } receiveValue: {[weak self] countries in
                 self?.isLoading = false
@@ -106,7 +110,7 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     private func handleCountriesResponse(_ countries: [Country]) {
-        guard !countries.isEmpty else {
+        guard !countries.isEmpty, countries.contains(where: {$0.name.common == defaultCountryName}) else {
             fetchDefaultCountry()
             return
         }

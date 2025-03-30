@@ -11,6 +11,7 @@ import Combine
 final class CountriesSearchViewModel: ObservableObject {
     @Published var countries: [Country] = []
     @Published var isLoading: Bool = false
+    @Published var shouldRefreshFromCache: Bool = false
     private var cancellables = Set<AnyCancellable>()
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
     private let countryPersistenceUseCase: CountryPersistenceUseCaseContract
@@ -56,6 +57,7 @@ final class CountriesSearchViewModel: ObservableObject {
             } receiveValue: {[weak self] _ in
                 self?.isLoading = false
                 self?.countries.removeAll(where: {$0.id == country.id})
+                self?.shouldRefreshFromCache = true
             }.store(in: &cancellables)
 
     }

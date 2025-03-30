@@ -11,6 +11,7 @@ struct CountriesSearchView: View {
     @StateObject private var viewModel: CountriesSearchViewModel = .init()
     @State private var searchText: String = ""
     @State private var selectedCountry: Country?
+    @Binding var shouldRefresh: Bool
     
     var body: some View {
         VStack(spacing: 12){
@@ -31,6 +32,12 @@ struct CountriesSearchView: View {
         .sheet(item: $selectedCountry) { country in
             detailsView(country: country)
             .presentationDetents([.medium, .large])
+        }
+        .onChange(of: viewModel.shouldRefreshFromCache) { _, newValue in
+            if newValue {
+                self.shouldRefresh = newValue
+                viewModel.shouldRefreshFromCache = false
+            }
         }
     }
     
@@ -91,8 +98,4 @@ struct CountriesSearchView: View {
             dismissDetailsSheet()
         }
     }
-}
-
-#Preview {
-    CountriesSearchView()
 }
