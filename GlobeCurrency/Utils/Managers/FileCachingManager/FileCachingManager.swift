@@ -9,33 +9,30 @@ import Foundation
 import Combine
 
 final class FileCacheManager: FileCacheManagerContract {
+    private var updatesSubject = PassthroughSubject<Void, Never>()
     private let fileName: String
     private let queue = DispatchQueue(label: "fileCacheQueue", attributes: .concurrent)
+    private let subject = PassthroughSubject<Void, Never>()
+    var updates: AnyPublisher<Void, Never> { updatesSubject.eraseToAnyPublisher() }
+
     
     lazy private var cacheDirectoryURL: URL = {
         let cacheDirectoryURL = FileManager.default.urls(
             for: .cachesDirectory,
             in: .userDomainMask
         ).first ?? FileManager.default.temporaryDirectory
-        
-        let folderURL = cacheDirectoryURL.appendingPathComponent(fileName)
-        
-        if !FileManager.default.fileExists(atPath: folderURL.path) {
-            try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
-        }
-        
-        return folderURL
+        return cacheDirectoryURL.appendingPathComponent("\(fileName).json")
     }()
     
-    //MARK: Initializer
     init(fileName: String) {
         self.fileName = fileName
     }
     
     func save<T: Codable & Identifiable>(_ object: T) -> AnyPublisher<Void, Error> {
         return Future { promise in
-            self.queue.async(flags: .barrier) {
-                var allObjects: [T] = self.loadObjects()
+            self.queue.async(flags: .barrier) {[weak self] in
+                guard let self else { return }
+                var allObjects: [T] = loadObjects()
                 if let index = allObjects.firstIndex(where: { $0.id == object.id }) {
                     allObjects[index] = object
                 } else {
@@ -43,7 +40,8 @@ final class FileCacheManager: FileCacheManagerContract {
                 }
                 
                 do {
-                    try self.saveObjects(allObjects)
+                    try saveObjects(allObjects)
+                    updatesSubject.send()
                     promise(.success(()))
                 } catch {
                     promise(.failure(error))
@@ -64,12 +62,14 @@ final class FileCacheManager: FileCacheManagerContract {
     
     func delete<T: Codable & Identifiable>(_ object: T) -> AnyPublisher<Void, Error>{
         return Future { promise in
-            self.queue.async(flags: .barrier) {
-                var allObjects: [T] = self.loadObjects()
+            self.queue.async(flags: .barrier) {[weak self] in
+                guard let self else { return }
+                var allObjects: [T] = loadObjects()
                 allObjects.removeAll { $0.id == object.id }
                 
                 do {
-                    try self.saveObjects(allObjects)
+                    try saveObjects(allObjects)
+                    updatesSubject.send()
                     promise(.success(()))
                 } catch {
                     promise(.failure(error))

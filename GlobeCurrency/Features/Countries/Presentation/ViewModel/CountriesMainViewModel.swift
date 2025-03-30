@@ -16,15 +16,18 @@ class CountriesMainViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     private var defaultCountryName: String = "Egypt"
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
+    private let countriesPersistenceUseCase: CountryPersistenceUseCaseContract
     
     init(
         permissionAuthenticator: PermissionsAuthenticatorContract = PermissionsAutheticator.locationPermission,
         locationManager: UserLocationManager = UserLocationManager(),
-        searchCountriesUseCase: SearchCountriesUseCaseContract = SearchCountriesUseCase()
+        searchCountriesUseCase: SearchCountriesUseCaseContract = SearchCountriesUseCase(),
+        countriesPersistenceUseCase: CountryPersistenceUseCaseContract = CountryPersistenceUseCase()
     ) {
         self.permissionAuthenticator = permissionAuthenticator
         self.locationManager = locationManager
         self.searchCountriesUseCase = searchCountriesUseCase
+        self.countriesPersistenceUseCase = countriesPersistenceUseCase
         checkLocationPermission()
     }
     
@@ -35,24 +38,24 @@ class CountriesMainViewModel: ObservableObject {
     }
     
     private func getUserLocationBasedOnLocationPermission(isAuthorized: Bool) {
-        isAuthorized ? getCountryWithName() : getDefaultCountry()
+        if isAuthorized {
+            setUserCountryName()
+        } else {
+            fetchAllCountries()
+        }
     }
     
-    private func getCountryWithName() {
+    private func setUserCountryName() {
         locationManager.requestLocation()
         locationManager.countryName
             .receive(on: RunLoop.main)
             .sink {[weak self] countryName in
                 self?.defaultCountryName = countryName
-                self?.fetchCountry()
+                self?.fetchAllCountries()
             }.store(in: &cancellables)
     }
     
-    private func getDefaultCountry() {
-        fetchCountry()
-    }
-    
-    private func fetchCountry() {
+    private func fetchDefaultCountry() {
         isLoading = true
         searchCountriesUseCase.execute(countryName: defaultCountryName)
             .receive(on: RunLoop.main)
@@ -63,8 +66,50 @@ class CountriesMainViewModel: ObservableObject {
                 guard let self else { return }
                 self.isLoading = false
                 if let firstCountry = countries.first(where: {$0.name.common == self.defaultCountryName}) {
-                    self.countries.insert(firstCountry, at: 0)
+                    self.saveCountry(firstCountry)
+                    fetchAllCountries()
                 }
             }.store(in: &cancellables)
+    }
+    
+    func removeCountry(_ country: Country) {
+        countriesPersistenceUseCase.executeDelete(country:country)
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                guard case .failure(_) = completion else { return }
+            } receiveValue: { _ in
+                print("removed Successfully")
+            }.store(in: &cancellables)
+    }
+    
+    func saveCountry(_ country: Country) {
+        countriesPersistenceUseCase.executeSave(country: country)
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                guard case .failure(_) = completion else { return }
+            } receiveValue: { _ in
+                print("Saveeeeeeeeeed")
+            }.store(in: &cancellables)
+    }
+    
+    private func fetchAllCountries() {
+        isLoading = true
+        countriesPersistenceUseCase.executeFetchCountries()
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                guard case .failure(let error) = completion else { return }
+                self.isLoading = false
+            } receiveValue: {[weak self] countries in
+                self?.isLoading = false
+                self?.handleCountriesResponse(countries)
+            }.store(in: &cancellables)
+    }
+    
+    private func handleCountriesResponse(_ countries: [Country]) {
+        guard !countries.isEmpty else {
+            fetchDefaultCountry()
+            return
+        }
+        self.countries = countries
     }
 }

@@ -58,12 +58,11 @@ struct CountryDetailsView<ActionButton: View>: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
     }
     
     
     private var closeButton: some View {
-        HStack {
+        HStack(alignment: .center) {
             Spacer()
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
@@ -72,7 +71,6 @@ struct CountryDetailsView<ActionButton: View>: View {
                     .background(Color.gray.opacity(0.6))
                     .clipShape(Circle())
             }
-            .padding()
         }
     }
 }

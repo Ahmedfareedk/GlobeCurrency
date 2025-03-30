@@ -56,18 +56,19 @@ struct CountriesMainView: View {
     
     private var listItemActionButton: some View {
         CustomButton(foregroundColor: .red, imageName: "trash") {
-            print("addddd")
+            removeSelectedCountry()
         }
     }
     
     private var detailsActionButton: some View {
         CustomButton(backgroundColor: .red, label: "Remove from countries list", height: 64, cornerRadius: 12, isFullWidth: true) {
-            print("addddd")
+            removeSelectedCountry()
         }
     }
     
-    private func removeCountry(_ country: Country) {
-        viewModel.countries.removeAll { $0.id == country.id }
+    private func removeSelectedCountry() {
+        guard let selectedCountry else { return }
+        viewModel.removeCountry(selectedCountry)
     }
 }
 
