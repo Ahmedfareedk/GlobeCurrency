@@ -30,7 +30,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8BCF56FC2D982F61006C9A1F /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */ = {
+		8B71338A2D98D37E0089059A /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -43,7 +43,7 @@
 		8BBD7B792D9625E800BB5AAB /* GlobeCurrency */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				8BCF56FC2D982F61006C9A1F /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */,
+				8B71338A2D98D37E0089059A /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */,
 			);
 			path = GlobeCurrency;
 			sourceTree = "<group>";
