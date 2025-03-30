@@ -13,7 +13,7 @@ class CountriesMainViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isOnline: Bool = true
     @Published var showOfflineSnackBar: Bool = false
-    @Published private var locationPermissionStatus: Bool = false
+    @Published private var locationPermissionStatus: AuthorizationStatus = .notDetermined
     private let permissionAuthenticator: PermissionsAuthenticatorContract
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
     private let countriesPersistenceUseCase: CountryPersistenceUseCaseContract
@@ -53,14 +53,14 @@ class CountriesMainViewModel: ObservableObject {
     
     func checkLocationPermission() {
         permissionAuthenticator.requestAuthorizationStatus {[weak self] authorizationStatus in
-            self?.getUserLocationBasedOnLocationPermission(isAuthorized: authorizationStatus == .authorized)
+            self?.getUserLocationBasedOnLocationPermission(isAuthorized: authorizationStatus)
         }
     }
     
-    private func getUserLocationBasedOnLocationPermission(isAuthorized: Bool) {
+    private func getUserLocationBasedOnLocationPermission(isAuthorized: AuthorizationStatus) {
         guard locationPermissionStatus != isAuthorized else { return }
         locationPermissionStatus = isAuthorized
-        if locationPermissionStatus && isOnline {
+        if locationPermissionStatus == .authorized && isOnline {
             setUserCountryName()
         } else {
             fetchAllCountries()
