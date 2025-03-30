@@ -16,13 +16,13 @@ struct CountriesSearchView: View {
         VStack(spacing: 12){
             searchView
             Spacer()
-            if searchText.isEmpty {
+            if searchText.isEmpty && viewModel.countries.isEmpty {
                 emptySearchTextView
             }
             
-            if viewModel.countries.isEmpty && !searchText.isEmpty{
-                emptySearchResultsView
-            }
+//            if viewModel.countries.isEmpty && !searchText.isEmpty{
+//                emptySearchResultsView
+//            }
             
             countriesListView
         }
@@ -37,12 +37,13 @@ struct CountriesSearchView: View {
     @ViewBuilder
     private func detailsView(country: Country) -> some View {
         CountryDetailsView(country: country, actionButton: detailsActionButton) {
-            selectedCountry = nil
+            dismissDetailsSheet()
         }
     }
     
     private var searchView: some View {
         SearchBarView(searchText: $searchText, placeholder: "Search by country name") {
+            dismissDetailsSheet()
             viewModel.searchCountries(for: searchText)
         }
     }
@@ -51,13 +52,17 @@ struct CountriesSearchView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(viewModel.countries, id: \.id) { country in
-                    CountryCardView(country: country, actionButton: listItemActionButton)
+                    CountryCardView(country: country, actionButton: listItemActionButton(savableCountry: country))
                     .onTapGesture {
                         selectedCountry = country
                     }
                 }
             }
         }
+    }
+    
+    private func dismissDetailsSheet() {
+        selectedCountry = nil
     }
     
     private var emptySearchTextView: some View {
@@ -72,15 +77,18 @@ struct CountriesSearchView: View {
             systemImage: "exclamationmark.magnifyingglass")
     }
     
-    private var listItemActionButton: some View {
+    @ViewBuilder
+    private func listItemActionButton(savableCountry: Country) -> some View {
         CustomButton(foregroundColor: .blue, imageName: "plus.circle.fill") {
-            print("addddd")
+            viewModel.saveCountry(savableCountry)
         }
     }
     
     private var detailsActionButton: some View {
         CustomButton(backgroundColor: .blue, label: "Add to main countries list", height: 64, cornerRadius: 12, isFullWidth: true) {
-            print("addddd")
+            guard let selectedCountry else { return }
+            viewModel.saveCountry(selectedCountry)
+            dismissDetailsSheet()
         }
     }
 }

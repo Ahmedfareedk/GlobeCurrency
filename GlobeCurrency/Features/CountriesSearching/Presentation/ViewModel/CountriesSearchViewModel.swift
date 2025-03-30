@@ -13,9 +13,14 @@ final class CountriesSearchViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     private var cancellables = Set<AnyCancellable>()
     private let searchCountriesUseCase: SearchCountriesUseCaseContract
+    private let countryPersistenceUseCase: CountryPersistenceUseCaseContract
     
-    init(searchCountriesUseCase: SearchCountriesUseCaseContract = SearchCountriesUseCase()) {
+    init(
+        searchCountriesUseCase: SearchCountriesUseCaseContract = SearchCountriesUseCase(),
+        countryPersistenceUseCase: CountryPersistenceUseCaseContract = CountryPersistenceUseCase()
+    ) {
         self.searchCountriesUseCase = searchCountriesUseCase
+        self.countryPersistenceUseCase = countryPersistenceUseCase
     }
     
     func searchCountries(for name: String) {
@@ -24,12 +29,33 @@ final class CountriesSearchViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .sink {[weak self] completion in
                 self?.isLoading = false
-                guard case .failure(let error) = completion else { return }
-                print(error)
-                
-            } receiveValue: { [weak self]countries in
+                guard case .failure(_) = completion else { return }
+            } receiveValue: { [weak self] countries in
+                self?.filterCountries(countries: countries)
                 self?.isLoading = false
-                self?.countries = countries
+            }.store(in: &cancellables)
+    }
+    
+    private func filterCountries(countries: [Country]) {
+        countryPersistenceUseCase.executeFetchCountries()
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                guard case .failure(_) = completion else { return }
+            } receiveValue: { cachedCountries in
+                self.countries = countries.filter { !cachedCountries.contains($0) }
+            }.store(in: &cancellables)
+    }
+    
+    func saveCountry(_ country: Country) {
+        isLoading = true
+        countryPersistenceUseCase.executeSave(country: country)
+            .receive(on: RunLoop.main)
+            .sink {[weak self] completion in
+                guard case .failure(_) = completion else { return }
+                self?.isLoading = false
+            } receiveValue: {[weak self] _ in
+                self?.isLoading = false
+                self?.countries.removeAll(where: {$0.id == country.id})
             }.store(in: &cancellables)
 
     }
