@@ -26,38 +26,16 @@ struct CountryDetailsView<ActionButton: View>: View {
     }
     
     private var flagImageView: some View {
-        AsyncImage(url: URL(string: country.flags?.png ?? "")) { image in
-            image
-                .resizable()
-                .scaledToFit()
-                .frame(height: 84)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(.gray.opacity(0.5), lineWidth: 1)
-                )
-        } placeholder: {
-            ProgressView()
-        }
+        ImageLoaderView(imageURL: country.flags?.png ?? "")
+            .frame(width: 120, height: 84)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay( RoundedRectangle(cornerRadius: 10)
+                .stroke(.gray.opacity(0.5), lineWidth: 1)
+            )
     }
     
     private var detailsTextViews: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(country.name.common)
-                .font(.title2.bold())
-            
-            if let capital = country.capital?.first {
-                Text("Capital: \(capital)")
-            }
-            
-            if let currency = country.currencies?.values.first {
-                Text("Currency: \(currency.name ?? "")")
-                if let symbol = currency.symbol {
-                    Text("Symbol: \(symbol)")
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        CountryContentView(country: country)
     }
     
     

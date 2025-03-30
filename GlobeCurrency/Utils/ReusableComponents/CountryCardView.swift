@@ -33,33 +33,12 @@ struct CountryCardView<ActionButton: View>: View {
     }
     
     private var flagImageView: some View {
-        AsyncImage(url: URL(string: country.flags?.png ?? "")) { image in
-            image
-                .resizable()
-                .scaledToFit()
-        } placeholder: {
-            ProgressView()
-        }
+        ImageLoaderView(imageURL: country.flags?.png ?? "")
         .frame(width: 80, height: 50)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
     
     private var detailsView: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            detailText(country.name.common, isTitle: true)
-            
-            if let capital = country.capital?.first {
-                detailText("Capital: \(capital)")
-            }
-            
-            if let currency = country.currencies?.values.first {
-                detailText("Currency: \(currency.name ?? "")")
-                
-                if let symbol = currency.symbol {
-                    detailText("Symbol: ( \(symbol) )")
-                    
-                }
-            }
-        }
+        CountryContentView(country: country)
     }
 }
