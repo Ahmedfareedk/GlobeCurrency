@@ -67,7 +67,12 @@ final class CountriesSearchViewModel: ObservableObject {
                 guard case .failure(_) = completion else { return }
             } receiveValue: {[weak self] cachedCountries in
                 guard let self else { return }
-                self.countries = countries.filter { !cachedCountries.contains($0) }
+                let filteredCountries = countries.filter { !cachedCountries.contains($0) }
+                guard !filteredCountries.isEmpty else {
+                    showEmptyResultsState = true
+                    return
+                }
+                self.countries = filteredCountries
             }.store(in: &cancellables)
     }
     

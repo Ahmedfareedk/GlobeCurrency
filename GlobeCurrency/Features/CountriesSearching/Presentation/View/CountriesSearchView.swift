@@ -34,6 +34,9 @@ struct CountriesSearchView: View {
                 viewModel.shouldRefreshFromCache = false
             }
         }
+        .onChange(of: searchText) { _, newSearchText in
+            viewModel.searchCountries(for: newSearchText)
+        }
     }
     
     @ViewBuilder
@@ -44,9 +47,9 @@ struct CountriesSearchView: View {
     }
     
     private var searchView: some View {
-        SearchBarView(searchText: $searchText, isSearchButtonDisabled: !viewModel.isOnline, placeholder: "Search by country name") {
+        SearchBarView(isSearchButtonDisabled: !viewModel.isOnline, placeholder: "Search by country name") { searchText in
+            self.searchText = searchText
             dismissDetailsSheet()
-            viewModel.searchCountries(for: searchText)
         }
         .disabled(!viewModel.isOnline)
     }
@@ -61,6 +64,7 @@ struct CountriesSearchView: View {
                     }
                 }
             }
+            .isHidden(viewModel.showEmptyResultsState)
         }
         .scrollDismissesKeyboard(.immediately)
     }

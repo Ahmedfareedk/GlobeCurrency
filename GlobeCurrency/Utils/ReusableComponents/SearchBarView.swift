@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    @Binding var searchText: String
+    @State var searchText: String = ""
     @State var isSearchButtonDisabled: Bool
     @FocusState private var isTextFieldFocused: Bool
     var placeholder: String
-    var onTapSearch: () -> Void
+    var onTapSearch: (String) -> Void
     
     
     var body: some View {
@@ -34,7 +34,7 @@ struct SearchBarView: View {
     
     private var searchButton: some View {
         Button(action: {
-            onTapSearch()
+            onTapSearch(searchText)
             isTextFieldFocused = false
         }) {
             Image(systemName: "magnifyingglass")
@@ -54,10 +54,10 @@ struct SearchBarView: View {
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant(""), isSearchButtonDisabled: false, placeholder: "") {}
+        SearchBarView(searchText: "", isSearchButtonDisabled: false, placeholder: "") { _ in }
     }
 }
 
 #Preview {
-    SearchBarView(searchText: .constant(""), isSearchButtonDisabled: false, placeholder: "") {}
+    SearchBarView(searchText: "", isSearchButtonDisabled: false, placeholder: "") { _ in }
 }
