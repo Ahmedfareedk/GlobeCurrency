@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8B7134172D998D3B0089059A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8B7134162D998D3B0089059A /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8BBD7B882D9625EA00BB5AAB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,22 @@
 		8BBD7B912D9625EA00BB5AAB /* GlobeCurrencyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlobeCurrencyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8B71338A2D98D37E0089059A /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8BBD7B762D9625E800BB5AAB /* GlobeCurrency */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8BBD7B792D9625E800BB5AAB /* GlobeCurrency */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8B71338A2D98D37E0089059A /* Exceptions for "GlobeCurrency" folder in "GlobeCurrency" target */,
+			);
 			path = GlobeCurrency;
 			sourceTree = "<group>";
 		};
@@ -52,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B7134172D998D3B0089059A /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +130,7 @@
 			);
 			name = GlobeCurrency;
 			packageProductDependencies = (
+				8B7134162D998D3B0089059A /* SDWebImageSwiftUI */,
 			);
 			productName = GlobeCurrency;
 			productReference = 8BBD7B772D9625E800BB5AAB /* GlobeCurrency.app */;
@@ -195,6 +214,9 @@
 			);
 			mainGroup = 8BBD7B6E2D9625E800BB5AAB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8B71338B2D998A960089059A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8BBD7B782D9625E800BB5AAB /* Products */;
 			projectDirPath = "";
@@ -399,6 +421,9 @@
 				DEVELOPMENT_TEAM = ZM4X8J4HCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +453,9 @@
 				DEVELOPMENT_TEAM = ZM4X8J4HCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlobeCurrency/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Globe Currency wants your location permission to provide you with your country updates";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -558,6 +586,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8B71338B2D998A960089059A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8B7134162D998D3B0089059A /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8B71338B2D998A960089059A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8BBD7B6F2D9625E800BB5AAB /* Project object */;
 }
